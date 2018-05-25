@@ -1,23 +1,23 @@
 <template>
     <div class="detail">
         <div class="item-img-content">
-            <img class="item-img" :src="list.iconUrl" >
+            <img class="item-img" :src="data.iconUrl" >
         </div>
         <div class="content">
             <div class="item-title">
-                <div class="title">{{list.goodsName}}</div>
+                <div class="title">{{data.goodsName}}</div>
                 <div class="price">
                     <div class="bean">
                         <img class="comm-bean-img" src="../../../assets/bean.png" alt="">
-                        <span>{{list.coinPrice}}个竞豆</span>
+                        <span>{{data.coinPrice}}个竞豆</span>
                     </div>
-                    <div class="consult-price">参考价 ¥ {{list.referencePrice}}元</div>
-                    <div class="residue">剩余{{list.exchangeNum}}份</div>
+                    <div class="consult-price">参考价 ¥ {{data.referencePrice}}元</div>
+                    <div class="residue">剩余{{data.exchangeNum}}份</div>
                 </div>
             </div>
             <div class="item-introduce">
                 <div class="introduce-title">商品介绍</div>
-                <div class="introduce-content">{{list.goodsDesc}}</div>
+                <div class="introduce-content">{{data.goodsDesc}}</div>
             </div>
             <div class="item-instructions">
                 <div class="instructions-title">兑换说明</div>
@@ -26,18 +26,32 @@
                 派奖信息；3.请尽快填写收货信息，超过30天未填写将取消中奖资格。</div>
             </div>
             <div class="footer">
-                <div class="total-bean">我的竞豆：{{list.user.coin}}</div>
-                <button class="btn">立即兑换</button>
+                <div class="total-bean">我的竞豆：{{data.user.coin}}</div>
+                <button class="btn" @click="handleClickBtn">立即兑换</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     name: 'DetailComponent',
     props: {
-        list: Object
+        data: Object
+    },
+    methods: {
+        handleClickBtn () {
+            axios.post('/api/goods/' + this.$route.params.id, {
+                exchangeNum: 1
+            }).then(res => {
+                if (res.data.status === 1) {
+                    alert(res.data.msg)
+                } else {
+                    alert(res.data.msg)
+                }
+            })
+        }
     }
 }
 </script>

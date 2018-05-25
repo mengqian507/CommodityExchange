@@ -1,6 +1,6 @@
 <template>
     <div>
-        <detail-component :list="DetailList"></detail-component>
+        <detail-component :data="DetailList"></detail-component>
     </div>
 </template>
 
@@ -20,23 +20,21 @@ export default {
     },
     mounted () {
         this.getDetailInfo()
-        console.log(this.$route.params.id)
     },
     methods: {
         getDetailInfo () {
             axios.get('/api/goods/' + this.$route.params.id)
-                .then(this.getDetailInfoSucc)
-        },
-        getDetailInfoSucc (res) {
-            if (res.status === 200 && res.data.data) {
-                const data = res.data.data
-                this.DetailList = data
-            }
+                .then(res => {
+                    if (res.data.status === 1 && res.data.data) {
+                        this.DetailList = res.data.data
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
         }
     }
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" scoped>
 

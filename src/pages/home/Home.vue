@@ -24,14 +24,14 @@ export default {
     methods: {
         getHomeInfo () {
             axios.get('/api/goods')
-                .then(this.getHomeInfoSucc)
-        },
-        getHomeInfoSucc (res) {
-            if (res.data.status === 1 && res.data.data) {
-                const data = res.data.data
-                this.CommodityList = data.list
-                console.log(this.CommodityList)
-            }
+                .then(res => {
+                    if (res.data.status === 1 && res.data.data) {
+                        const data = res.data.data
+                        this.CommodityList = data.list
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
         }
     }
 }
