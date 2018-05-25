@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <h1 class="header">热门推荐</h1>
+        <!--<h1 class="header">热门推荐</h1>-->
         <home-list :list="CommodityList"></home-list>
     </div>
 </template>
@@ -23,13 +23,14 @@ export default {
     },
     methods: {
         getHomeInfo () {
-            axios.get('/api/index.json')
+            axios.get('/api/goods')
                 .then(this.getHomeInfoSucc)
         },
         getHomeInfoSucc (res) {
-            if (res.data.ret && res.data.data) {
+            if (res.data.status === 1 && res.data.data) {
                 const data = res.data.data
-                this.CommodityList = data.List
+                this.CommodityList = data.list
+                console.log(this.CommodityList)
             }
         }
     }

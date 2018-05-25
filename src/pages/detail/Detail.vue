@@ -1,6 +1,6 @@
 <template>
     <div>
-        <detail-component :list="DetailList" :bean="bean"></detail-component>
+        <detail-component :list="DetailList"></detail-component>
     </div>
 </template>
 
@@ -20,20 +20,17 @@ export default {
     },
     mounted () {
         this.getDetailInfo()
+        console.log(this.$route.params.id)
     },
     methods: {
         getDetailInfo () {
-            axios.get('/api/index.json', {
-                params: {
-                    id: this.$route.params.id
-                }
-            }).then(this.getDetailInfoSucc)
+            axios.get('/api/goods/' + this.$route.params.id)
+                .then(this.getDetailInfoSucc)
         },
         getDetailInfoSucc (res) {
-            if (res.data.ret && res.data.data) {
+            if (res.status === 200 && res.data.data) {
                 const data = res.data.data
-                this.DetailList = data.Detail
-                this.bean = data.bean
+                this.DetailList = data
             }
         }
     }
