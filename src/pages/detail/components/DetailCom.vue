@@ -1,7 +1,7 @@
 <template>
     <div class="detail">
         <div class="item-img-content">
-            <img class="item-img" :src="data.iconUrl" >
+            <img class="item-img" :src="data.screenshotUrl[0]" >
         </div>
         <div class="content">
             <div class="item-title">
@@ -30,26 +30,46 @@
                 <button class="btn" @click="handleClickBtn">立即兑换</button>
             </div>
         </div>
+        <modal-page :show="this.mdShow" @confirmClick="handleConfirm">
+            兑换将使用{{data.coinPrice}}竞豆
+        </modal-page>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
+import ModalPage from '../../../components/Modal'
 export default {
     name: 'DetailComponent',
+    data () {
+        return {
+            mdShow: true
+        }
+    },
     props: {
         data: Object
     },
+    components: {
+        ModalPage
+    },
     methods: {
         handleClickBtn () {
-            axios.post('/api/goods/' + this.$route.params.id, {
-                exchangeNum: 1
-            }).then(res => {
-                if (res.data.status === 1) {
-                    alert(res.data.msg)
-                } else {
-                    alert(res.data.msg)
-                }
+            this.mdShow = true
+            console.log(this.mdShow)
+        },
+        handleConfirm (ajaxSucc) {
+            if (ajaxSucc === true) {
+                axios.post('/api/goods/' + this.$route.params.id, {
+                    exchangeNum: 1
+                }).then(res => {
+                    console.log(res)
+                })
+            }
+        },
+        open2 () {
+            this.$message({
+                message: '恭喜你，兑换成功',
+                type: 'success'
             })
         }
     }
