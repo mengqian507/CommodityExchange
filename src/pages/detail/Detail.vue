@@ -25,6 +25,7 @@ export default {
         getDetailInfo () {
             axios.get('/api/goods/' + this.$route.params.id)
                 .then(res => {
+                    console.log(res)
                     if (res.data.status === 1 && res.data.data) {
                         this.DetailList = res.data.data
                     } else {

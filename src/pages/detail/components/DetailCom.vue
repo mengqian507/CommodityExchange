@@ -1,7 +1,7 @@
 <template>
     <div class="detail">
         <div class="item-img-content">
-            <img class="item-img" :src="data.screenshotUrl[0]" >
+            <img class="item-img" :src="data.screenshotUrl">
         </div>
         <div class="content">
             <div class="item-title">
@@ -30,47 +30,80 @@
                 <button class="btn" @click="handleClickBtn">立即兑换</button>
             </div>
         </div>
-        <modal-page :show="this.mdShow" @confirmClick="handleConfirm">
-            兑换将使用{{data.coinPrice}}竞豆
-        </modal-page>
+        <!--弹框-->
+        <div class="model">
+            <div class="md-modal modal-msg md-modal-transition" v-if="mdShow">
+                <div class="md-modal-inner">
+                    <div class="md-content" style="margin-top: 20px;">
+                        <div class="confirm-tips">
+                            兑换将使用{{data.coinPrice}}竞豆
+                        </div>
+                        <div class="btn-wrap">
+                            <button class="cancel" @click="handleCancel">取消</button>
+                            <button class="confirm" @click="handleConfirm">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md-modal modal-msg md-modal-transition" v-if="mdShow1">
+                <div class="md-modal-inner">
+                    <div class="md-content" style="margin-top: 20px;">
+                        <div class="confirm-tips">
+                            {{mag}}
+                        </div>
+                        <div class="btn-wrap">
+                            <button class="confirm" @click="handleConfirm1">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--遮罩层-->
+            <div class="md-overlay" v-if="mdShow3"></div>
+        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
-import ModalPage from '../../../components/Modal'
 export default {
     name: 'DetailComponent',
     data () {
         return {
-            mdShow: true
+            mdShow: false,
+            mdShow1: false,
+            mdShow3: false,
+            mag: ''
         }
     },
     props: {
         data: Object
     },
-    components: {
-        ModalPage
-    },
     methods: {
         handleClickBtn () {
             this.mdShow = true
-            console.log(this.mdShow)
+            this.mdShow3 = true
         },
-        handleConfirm (ajaxSucc) {
-            if (ajaxSucc === true) {
-                axios.post('/api/goods/' + this.$route.params.id, {
-                    exchangeNum: 1
-                }).then(res => {
-                    console.log(res)
-                })
-            }
+        handleCancel () {
+            this.mdShow = false
         },
-        open2 () {
-            this.$message({
-                message: '恭喜你，兑换成功',
-                type: 'success'
+        handleConfirm () {
+            this.mdShow = false
+            axios.post('/api/goods/' + this.$route.params.id, {
+                exchangeNum: 1
+            }).then(res => {
+                if (res.data.status === 1) {
+                    this.mdShow1 = true
+                    this.mag = res.data.msg
+                //                    this.$router.push({ path: '/' })
+                } else {
+                    this.mdShow1 = true
+                    this.mag = res.data.msg
+                }
             })
+        },
+        handleConfirm1 () {
+            this.mdShow1 = false
+            this.mdShow3 = false
         }
     }
 }
@@ -81,6 +114,44 @@ export default {
     .detail
         color #f7fbff
         font-size .24rem
+        .model
+            .md-modal
+                position fixed
+                width 6rem
+                height 2.5rem
+                background #252933
+                left 50%
+                top 45%
+                transform translate(-50%,-50%)
+                z-index 999
+                border-radius .3rem
+                border 3px solid #2c3038
+                .confirm-tips
+                    font-size .4rem
+                    color #fff
+                    margin .5rem 0 .5rem 0
+                .btn-wrap
+                    display flex
+                    justify-content space-around
+                    .cancel, .confirm
+                        border-radius .07rem
+                        font-size .34rem
+                        background #4e505d
+                        color #fff
+                        width 2.3rem
+                        height .8rem
+                        &.confirm
+                            background #ee5040
+        .md-overlay
+            background #000
+            opacity 0.7
+            width 100%
+            height 100%
+            position fixed
+            top 0
+            left 0
+            right 0
+            z-index 99
         .item-img-content
             width: 100%;
             height: 4rem;

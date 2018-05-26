@@ -30,8 +30,8 @@ export default {
                         const data = res.data.data
                         this.CommodityList = data.list
                     } else if (res.data.status === 300011) {
-                        sessionStorage.clear()
-                        this.$router.push('/login')
+//                        sessionStorage.clear()
+//                        this.$router.push('/login')
                     } else {
                         alert(res.data.msg)
                     }
@@ -42,7 +42,7 @@ export default {
                 .then(res => {
                     if (res.data.status === 1) {
                         alert(res.data.msg)
-                        this.$router.push({ path: '/login' })
+                        this.$router.push({ path: '/' })
                     }
                 })
         }

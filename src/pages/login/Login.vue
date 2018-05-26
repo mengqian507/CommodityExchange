@@ -46,8 +46,11 @@ export default {
                         password: this.ruleForm2.Password
                     }).then(res => {
                         this.logining = false
+                        console.log(res)
                         if (res.data.status === 1) {
-                            sessionStorage.setItem('token', JSON.stringify(res.data.data.token))
+//                            sessionStorage.setItem('token', JSON.stringify(res.data.data.token))
+                          console.log(JSON.stringify(res.data.data.token))
+                            axios.defaults.headers.common['token'] = JSON.stringify(res.data.data.token)
                             this.$router.push({ path: '/' })
                             location.reload()
                         } else {
