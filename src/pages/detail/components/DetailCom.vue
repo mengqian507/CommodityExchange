@@ -3,7 +3,7 @@
         <div class="item-img-content">
             <img class="item-img" :src="data.screenshotUrl">
         </div>
-        <div class="content">
+        <div class="content" ref="mycontent">
             <div class="item-title">
                 <div class="title">{{data.goodsName}}</div>
                 <div class="price">
@@ -26,7 +26,9 @@
                 派奖信息；3.请尽快填写收货信息，超过30天未填写将取消中奖资格。</div>
             </div>
             <div class="footer">
-                <div class="total-bean">我的竞豆：{{data.user.coin}}</div>
+                <template v-if="data.user && data.user.coin !== undefined">
+                    <div class="total-bean">我的竞豆：{{data.user.coin}}</div>
+                </template>
                 <button class="btn" @click="handleClickBtn">立即兑换</button>
             </div>
         </div>
@@ -85,6 +87,7 @@ export default {
         },
         handleCancel () {
             this.mdShow = false
+            this.mdShow3 = false
         },
         handleConfirm () {
             this.mdShow = false
@@ -94,7 +97,9 @@ export default {
                 if (res.data.status === 1) {
                     this.mdShow1 = true
                     this.mag = res.data.msg
-                //                    this.$router.push({ path: '/' })
+                    let mycontent = this.$refs.mycontent
+                    mycontent.querySelector('.item-title .price .residue').innerHTML = '剩余' + res.data.data.currExchangeNum + '份'
+                    mycontent.querySelector('.footer .total-bean').innerHTML = '我的竞豆：' + res.data.data.coin
                 } else {
                     this.mdShow1 = true
                     this.mag = res.data.msg

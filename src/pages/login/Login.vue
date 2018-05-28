@@ -48,11 +48,8 @@ export default {
                         this.logining = false
                         console.log(res)
                         if (res.data.status === 1) {
-//                            sessionStorage.setItem('token', JSON.stringify(res.data.data.token))
-                          console.log(JSON.stringify(res.data.data.token))
-                            axios.defaults.headers.common['token'] = JSON.stringify(res.data.data.token)
+                            axios.defaults.headers.common['token'] = res.data.data.token
                             this.$router.push({ path: '/' })
-                            location.reload()
                         } else {
                             this.$message({
                                 message: res.data.msg,
