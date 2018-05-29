@@ -2,10 +2,10 @@
     <el-form :model="ruleForm2" ref="ruleForm2" :rules="rules" label-position="left" label-width="0px" class="demo-ruleForm login-container">
         <h1 class="title">登录账户</h1>
         <el-form-item prop="userName">
-            <el-input type="text" style="width: 7rem" class="inputValue" v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入账号"></el-input>
+            <el-input type="text" style="width: 100%" class="inputValue" v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入账号"></el-input>
         </el-form-item>
         <el-form-item prop="Password">
-            <el-input type="password" style="width: 7rem" class="inputValue" v-model="ruleForm2.Password" auto-complete="off" placeholder="请输入密码" @keyup.enter.native="handleSubmit2"></el-input>
+            <el-input type="password" style="width: 100%" class="inputValue" v-model="ruleForm2.Password" auto-complete="off" placeholder="请输入密码" @keyup.enter.native="handleSubmit2"></el-input>
         </el-form-item>
         <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
         <el-form-item style="width:100%;">
@@ -22,8 +22,8 @@ export default {
         return {
             logining: false,
             ruleForm2: {
-                userName: '',
-                Password: ''
+                userName: 'admin',
+                Password: '123456'
             },
             checked: true,
             rules: {
@@ -49,6 +49,7 @@ export default {
                         console.log(res)
                         if (res.data.status === 1) {
                             axios.defaults.headers.common['token'] = res.data.data.token
+                            localStorage.setItem('token', JSON.stringify(res.data.data.token))
                             this.$router.push({ path: '/' })
                         } else {
                             this.$message({

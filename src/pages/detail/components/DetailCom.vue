@@ -1,5 +1,6 @@
 <template>
     <div class="detail">
+        <span class="iconfont icon" @click="backBtn">&#xe624;</span>
         <div class="item-img-content">
             <img class="item-img" :src="data.screenshotUrl">
         </div>
@@ -103,12 +104,16 @@ export default {
                 } else {
                     this.mdShow1 = true
                     this.mag = res.data.msg
+                    this.$router.push({ path: '/login' })
                 }
             })
         },
         handleConfirm1 () {
             this.mdShow1 = false
             this.mdShow3 = false
+        },
+        backBtn () {
+            this.$router.push({ path: '/' })
         }
     }
 }
@@ -119,6 +124,16 @@ export default {
     .detail
         color #f7fbff
         font-size .24rem
+        .icon
+            position fixed
+            top .2rem
+            left .3rem
+            width .6rem
+            height .6rem
+            line-height .6rem
+            text-align center
+            border-radius 50%
+            background #292b37
         .model
             .md-modal
                 position fixed

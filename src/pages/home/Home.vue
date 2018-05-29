@@ -1,8 +1,17 @@
 <template>
     <div class="home">
-        <h1 class="header">热门推荐</h1>
-        <div class="loginOut" @click="loginOutClick">退出</div>
-        <home-list :list="CommodityList"></home-list>
+        <div class="header">
+            <h1 class="title">商品列表</h1>
+            <div class="loginOut" @click="loginOutClick">退出</div>
+            <div class="search">
+                <div class="search-content">
+                    <span class="iconfont">&#xe632;</span>
+                    <input @change="changePosts()" type="text" v-model="keyword" class="header-input" placeholder="请输入商品名称">
+                </div>
+                <button type="button" class="btn" @click="getHomeInfo">搜索</button>
+            </div>
+        </div>
+        <home-list :list="CommodityList" style="margin-top: 1.8rem"></home-list>
         <!--弹框-->
         <div class="model">
             <div class="md-modal modal-msg md-modal-transition" v-if="mdShow1">
@@ -36,7 +45,8 @@ export default {
         return {
             CommodityList: [],
             mdShow1: false,
-            mdShow2: false
+            mdShow2: false,
+            keyword: ''
         }
     },
     mounted () {
@@ -44,17 +54,22 @@ export default {
     },
     methods: {
         getHomeInfo () {
-            axios.get('/api/goods')
-                .then(res => {
-                    if (res.data.status === 1 && res.data.data) {
-                        const data = res.data.data
-                        this.CommodityList = data.list
-                    } else if (res.data.status === 300011) {
-                        this.$router.forward('/login')
-                    } else {
-                        alert(res.data.msg)
-                    }
-                })
+            axios.get('/api/goods', {
+                params: {
+                    offset: 0,
+                    limit: 100000,
+                    goodsName: this.keyword
+                }
+            }).then(res => {
+                if (res.data.status === 1 && res.data.data) {
+                    const data = res.data.data
+                    this.CommodityList = data.list
+                } else if (res.data.status === 300011) {
+                    this.$router.forward('/login')
+                } else {
+                    alert(res.data.msg)
+                }
+            })
         },
         loginOutClick () {
             this.mdShow1 = true
@@ -75,6 +90,11 @@ export default {
         handleCancel () {
             this.mdShow1 = false
             this.mdShow2 = false
+        },
+        changePosts () {
+            if (this.keyword === '') {
+                this.getHomeInfo()
+            }
         }
     }
 }
@@ -83,24 +103,61 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" scoped>
     .header
-        font-style oblique
-        color #fff
-        font-size .5rem
-        font-weight bolder
-        margin-top .3rem
-    .loginOut
-        display inline-block
-        width .8rem
-        height .4rem
-        line-height .4rem
-        background #ff654f
-        color #fff
-        border-radius .1rem
-        font-size .24rem
         position fixed
-        top .3rem
-        right .3rem
+        top 0
+        left 0
+        right 0
+        width 100%
         z-index 99
+        background #171722
+        padding-bottom .2rem
+        .title
+            font-style oblique
+            color #fff
+            font-size .4rem
+            font-weight bolder
+            margin .3rem 0 0.2rem 0
+        .loginOut
+            display inline-block
+            width .8rem
+            height .4rem
+            line-height .43rem
+            background #f46061
+            color #fff
+            border-radius .1rem
+            font-size .24rem
+            position fixed
+            top .2rem
+            right .6rem
+            z-index 99
+        .search
+            display flex
+            .search-content
+                margin-top .1rem
+                width 80%
+                position relative
+                .iconfont
+                    display inline-block
+                    position absolute
+                    top .14rem
+                    left .5rem
+                .header-input
+                    width 90%
+                    height .64rem
+                    line-height .64rem
+                    border-radius .1rem
+                    padding-left .6rem
+                    box-sizing border-box
+                    background #707381
+            .btn
+                width 1rem
+                height .64rem
+                border-radius .1rem
+                line-height .64rem
+                text-align center
+                margin .1rem 0 0 .1rem
+                background rgba(70, 72, 86, 0.81)
+                color rgba(193, 193, 193, 0.78)
     .model
         .md-modal
             position fixed
