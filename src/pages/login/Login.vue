@@ -7,7 +7,7 @@
         <el-form-item prop="Password">
             <el-input type="password" style="width: 100%" class="inputValue" v-model="ruleForm2.Password" auto-complete="off" placeholder="请输入密码" @keyup.enter.native="handleSubmit2"></el-input>
         </el-form-item>
-        <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
+        <el-checkbox v-model="checked" class="remember">记住密码</el-checkbox>
         <el-form-item style="width:100%;">
             <el-button type="primary" style="width: 100%" class="inputValue" @click.native.prevent="handleSubmit('ruleForm2')" :loading="logining">登录</el-button>
         </el-form-item>
@@ -22,10 +22,10 @@ export default {
         return {
             logining: false,
             ruleForm2: {
-                userName: 'admin',
-                Password: '123456'
+                userName: '',
+                Password: ''
             },
-            checked: true,
+            checked: false,
             rules: {
                 userName: [
                     { required: true, message: '请输入账号', trigger: 'blur' }
@@ -38,6 +38,13 @@ export default {
     },
     methods: {
         handleSubmit (formName) {
+            let name = this.ruleForm2.userName
+            let pass = this.ruleForm2.Password
+            if (this.checked === true) {
+                this.setCookie(name, pass, 7)
+            } else {
+                this.clearCookie()
+            }
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.logining = true
@@ -46,7 +53,6 @@ export default {
                         password: this.ruleForm2.Password
                     }).then(res => {
                         this.logining = false
-                        console.log(res)
                         if (res.data.status === 1) {
                             axios.defaults.headers.common['token'] = res.data.data.token
                             localStorage.setItem('token', JSON.stringify(res.data.data.token))
@@ -63,7 +69,42 @@ export default {
                     return false
                 }
             })
+        },
+        setCookie (name, pass, exdays) {
+            let exdate = new Date()
+            exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays)
+            window.document.cookie = 'userName' + '=' + name + ';path=/;expires=' + exdate.toGMTString()
+            window.document.cookie = 'userPwd' + '=' + pass + ';path=/;expires=' + exdate.toGMTString()
+        },
+        getCookie () {
+            let arr = window.document.cookie.split('; ')
+            for (let i = 0; i < arr.length; i++) {
+                let arr2 = arr[i].split('=')
+                console.log(arr2)
+                if (arr2[0] === 'userName') {
+                    this.ruleForm2.userName = arr2[1]
+                } else if (arr2[0] === 'userPwd') {
+                    this.ruleForm2.Password = arr2[1]
+                }
+            }
+        },
+        clearCookie () {
+            this.setCookie('', '', -1)
+        },
+        rememberCookie () {
+            this.checked = false
+            this.ruleForm2.userName = ''
+            this.ruleForm2.Password = ''
+            if (window.document.cookie.length > 0) {
+                this.getCookie()
+                this.checked = true
+            } else {
+                this.checked = false
+            }
         }
+    },
+    mounted () {
+        this.rememberCookie()
     }
 }
 </script>
